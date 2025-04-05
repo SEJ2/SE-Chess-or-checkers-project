@@ -4,44 +4,44 @@ import os
 
 pygame.init()
 
-WITDTH, HEIGHT = 800, 800
-screen = pygame.display.set_mode([WITDTH, HEIGHT])
-font = pygame.font.Font('freesansbold.ttf', 20)
-big_font = pygame.font.Font('freesansbold.ttf', 50)
-timer = pygame.time.Clock()
-fps = 80
-
 
 # creating the pieces super class
-class chesspiece: 
+class chessPiece: 
 
     def __init__(self, color, Type, worth, image_path):
         self.color = color
         self.Type = Type
-        self.worth = worth
-        self.image = pygame.image.load(image_path)   
+        self.worth = worth 
+        try:
+              self.image = pygame.image.load(image_path)
+              print(f"{color}_{Type} loaded successfuly")
+        except pygame.error: 
+              print(f"failed to load {Type}_{image_path}")  
+
     
 # driver code that initialize the pieces of in both colors
 list_of_pieces = ["Pawn", "Bishop", "Knight", "Rook", "Queen", "King"]
-folder = "images/"
 colors = ["White", "Black"]
 
-types_of_subclasses = {}
- #creating subclasse for each piece
-# function for creating the subclass 
-def create_pieces_subclasses(self):
- for color in color:
+file_directory = os.path.dirname((os.path.abspath(__file__)))
+folder = os.path.join(file_directory, "images/")
+
+# dictionary to hold objects of chesspice class
+types_of_object = {}
+
+ # creating one object piece in both colors
+
+
+def create_pieces():
+ for color in colors:
       for piece in list_of_pieces:
-         def __init__(chesspiece):
-           class piece(chesspiece):
-              super.__init_subclass__(f"{list_of_pieces}")
-              types_of_subclasses = {}
+          piece_type = f"{color}{piece}"
+          image_path = os.path.join(folder, f"{color}_{piece}.png")
+          piece_object = chessPiece(color, piece, 0, image_path)
+           
+           # updating the dictionary each time an object is created
+          types_of_object[piece_type] = piece_object
+
               
-# importing images files and dynamically assigning images      
- for types in types_of_subclasses:
-     image_path = os.path.join(f"{folder},{colors}_{type}.png")
-     try:
-      hasattr(piece,"image_path")
-      print("file loaded usccesfuly")
-     except AttributeError: 
-      print("failed to load piece image")
+# calling function to create pieces
+create_pieces() 
