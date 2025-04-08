@@ -11,14 +11,12 @@ class chessPiece:
         self.color = color
         self.Type = piece_type
         self.worth = worth 
-
         try:
               self.image = pygame.image.load(image_path)
               print(f"{color}_{piece_type} loaded successfully")
         except pygame.error: 
               print(f"failed to load {piece_type}") 
 
-    
 # driver code that initialize the pieces of in both colors
 list_of_pieces = ["Pawn", "Bishop", "Knight", "Rook", "Queen", "King"]
 colors = ["White", "Black"]
