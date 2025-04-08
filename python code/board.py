@@ -12,8 +12,9 @@ timer = pygame.time.Clock()
 fps = 60
 
 # setting color options for the squares
-black = (0,0,0)
-white = (255,255,255)
+black = (125, 135, 150)
+white = (232,235,239)
+
 class Square:
     def __init__(self, color, size, column, row,  piece):
        self.color = color
@@ -28,16 +29,17 @@ class Square:
 
     #function for drawing pieces on the board
     def draw_pieces(self, surface):
-        if self.piece:
-            surface.blit(self.piece.image, (self.column * self.size, self.row *self.size))
+        if self.piece and hasattr(self.piece, "image"):
+           resized_image = pygame.transform.scale(self.piece.image, (self.size, self.size))
+           surface.blit(resized_image, (self.column * self.size, self.row *self.size))
 
 # creating the board 
-class board(chess.Board):
+class ChessBoard(chess.Board):
      def __init__(self, surface, column = 8, Rows = 8):
          super().__init__()
          self.column = column
          self.Rows = Rows
-         self.squares_coordinate = [[None for all in range(self.column)] for all in range(self.Rows)]
+         self.squares_coordinate = [[None for i in range(self.column)] for i in range(self.Rows)]
          self.square_size = WIDTH // self.column
          self.create_squares(surface)
          self.pieces_starting_position(surface)
@@ -85,7 +87,7 @@ class board(chess.Board):
 
 def main():
     running = True
-    chessboard = board(screen)
+    chessboard = ChessBoard(screen)
 
     while running: 
         for event in pygame.event.get(): 
@@ -94,12 +96,13 @@ def main():
                running = False
 
         screen.fill((255,255,255))
-        chessboard.create_squares(screen)
+        
         
         # displaying pieces
         for col in range(chessboard.column):
             for row in range(chessboard.Rows):
                 square = chessboard.squares_coordinate[col][row]
+                square.draw_square(screen)
                 square.draw_pieces(screen)
 
         #updating the screen

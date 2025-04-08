@@ -57,11 +57,10 @@ def create_pieces():
              created_piece_objects[piece_type] = piece_object
 
     #updating the backrows of each color
-    for piece in backrow:
-        white_backrow[piece] = created_piece_objects[f"White{piece}"]
-        black_backrow[piece]=  created_piece_objects[f"Black{piece}"]
+    for i, piece in enumerate (backrow):
+        white_backrow[i] = created_piece_objects[f"White{piece}"]
+        black_backrow[i]=  created_piece_objects[f"Black{piece}"]
 
-        
           
 # calling function to create pieces
 create_pieces()
