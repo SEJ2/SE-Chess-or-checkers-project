@@ -1,5 +1,4 @@
-import chess
-import chess.engine
+
 import pygame
 import pieces
 
@@ -34,7 +33,7 @@ class Square:
            surface.blit(resized_image, (self.column * self.size, self.row *self.size))
 
 # creating the board 
-class ChessBoard(chess.Board):
+class ChessBoard:
      def __init__(self, surface, column = 8, Rows = 8):
          super().__init__()
          self.column = column
@@ -96,7 +95,6 @@ def main():
                running = False
 
         screen.fill((255,255,255))
-        
         
         # displaying pieces
         for col in range(chessboard.column):
