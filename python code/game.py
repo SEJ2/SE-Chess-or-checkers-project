@@ -4,43 +4,38 @@ import pygame
 
 pygame.init()
 
-class Move:
-    def __init__(self, piece, events, col, row, move_pattern):
-             self.piece = piece 
-             self.events = pygame.event.get()
-             #setting up origin and destination
-             self.current_sqaure = board.ChessBoard.squares_coordinate[[col][row]]
-             self.destination = None
+class Game:
+    def __init__(self, turn, active_player, boardstate):
+
+             #setting up oto capture the board state at any turn
+             self.turn = turn
+             self.active_player = active_player
+             self.boardstate = boardstate
+             
+             #initialize on turn 1
+             turn = 1
              #self.move_pattern(self,piece)
             
-#creating a function that assign the specific move patter to each piece that exist
-    def assign_move_pattern(self,piece):
-            if piece == "king":
-               move_pattern = 1
-
-            elif  piece == "Knight":
-              move_pattern = 3
-
-            elif  piece == "Bishop":
-              move_pattern = 5  
-
-            elif  piece == "Rook":
-              move_pattern = 5
-
-            elif  piece == "Queen":
-                move_pattern = 7 
-
-            else:  
-              move_pattern = 1
+#creating a function that assign the active player
+    def assign_active_player(self,piece):
             
-             
-#actually isueing a move order to the piece
-    def move_piece(self, piece):
-         #get the destination sqaure
-         #check if a piece exist at destination
+            White_player = board.pieces.color.White
+            black_player = board.pieces.color.Black
 
-         # move the piece if sqaure is empty or has oposite color
+            White_player_active = False
+            Black_player = False
 
-         # do not move to destination if it has same color piece
-         
-          pass 
+            if self.turn == 1:
+                   # on first turn white move first
+                   self.active_player == White_player
+
+            else:
+                   self.active_player == White_player
+                   # only active player can move its pieces
+            if self.active_player:
+                #get that players pieces color
+                board.pieces.color = self.active_player
+                #allow them to move
+                           
+                   # switch to other player after every active player move its pieces
+      

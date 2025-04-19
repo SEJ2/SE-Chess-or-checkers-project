@@ -1,16 +1,19 @@
 # game logic for chess project
 import pygame
 import os 
-
+from board import *
 pygame.init()
 
 # creating the pieces super class
 class chessPiece: 
 
-    def __init__(self, color, piece_type, worth, image_path):
+    def __init__(self, color, piece_type, worth, image_path, valid_moves):
         self.color = color
-        self.Type = piece_type
+        self.piece_type = piece_type
         self.worth = worth 
+        #list to hold valid moves of pieces
+        self.valid_moves = []
+      
         try:
               self.image = pygame.image.load(image_path)
               print(f"{color}_{piece_type} loaded successfully")
@@ -49,17 +52,31 @@ def create_pieces():
              else:  
               worth = 1000
               #creating the chesspiece objects
-             piece_object = chessPiece(color, piece, worth, image_path)
+             piece_object = chessPiece(color, piece_type, worth, image_path, valid_moves = None)
+
+             if piece_object == "Pawn": 
+               piece.piece_type = "Pawn"
+             
+             elif  piece_object == "Knight":
+                 piece.piece_type =  "Knight"
+             
+             elif piece_object == "Bishop":
+              piece.piece_type = "Bishop"
+             
+             elif  piece_object == "Rook":
+              piece.piece_type = "Rook"
+             
+             elif  piece_object == "Queen":
+              piece.piece_type = "Queen"
+             else:  
            
            # updating the dictionary each time an object is created
-             created_piece_objects[piece_type] = piece_object
+              created_piece_objects[piece_type] = piece_object
 
     #updating the backrows of each color
     for i, piece in enumerate (backrow):
         white_backrow[i] = created_piece_objects[f"White{piece}"]
-        black_backrow[i]=  created_piece_objects[f"Black{piece}"]
+        black_backrow[i]=  created_piece_objects[f"Black{piece}"]      
+ 
 
-          
-# calling function to create pieces
-create_pieces()
-
+   
