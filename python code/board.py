@@ -1,6 +1,6 @@
 import pygame
-
 pygame.init()
+
 from squares import *
 from pieces import *
 from game import *
@@ -52,6 +52,13 @@ class ChessBoard:
     # function for assigning pieces their initial posotion on the board
     def pieces_starting_position(self, surface):
 
+        #debugging placement
+        black_debuging_square = self.get_square(4,3)
+        black_debuging_square.piece = black_backrow.__getitem__(0)
+
+        white_debug_square = self.get_square(3,3)
+        white_debug_square.piece = white_backrow.__getitem__(2)
+
         # assigning the White pieces in the backrow starting postion
         for col, piece in white_backrow.items():
             square = self.get_square(col, 7)
@@ -75,6 +82,31 @@ class ChessBoard:
 
     # assigning the valid moves to the pieces
     def assign_valid_moves(self, piece, col, row):
+
+        #getting movement logic for Rooks, Bishop and Queen
+        def valid_ranged_moves(valid_moves):
+            for valid_squares in valid_moves:
+                col_increment, row_increment = valid_squares
+                possible_moves_col = col + col_increment
+                possible_moves_row = row + row_increment
+
+                while True:
+                    if Square.in_range(possible_moves_col, possible_moves_row):
+                            possible_square = self.get_square(possible_moves_col, possible_moves_row)
+                            if possible_square.is_empty:
+                                self.piece_selected_to_move.valid_moves.append((possible_moves_col, possible_moves_row))
+                               
+                            if possible_square.has_enemy(self.piece_selected_to_move.color):
+                                self.piece_selected_to_move.valid_moves.append((possible_moves_col, possible_moves_row))
+                                break
+
+                            if possible_square.has_ally(self.piece_selected_to_move.color):
+                                break
+                    else: break
+
+                    possible_moves_col = col + col_increment
+                    possible_moves_row = row + row_increment 
+
         # initializing valid moves list as empty
         piece.valid_moves = []
         # bound checking to get the clicked square
@@ -152,68 +184,47 @@ class ChessBoard:
                         if possible_square.is_empty_or_has_enemy(self.piece_selected_to_move.color):
                             self.piece_selected_to_move.valid_moves.append((possible_moves_col, possible_moves_row))
 
+
             # valid moves for Bishops
             elif piece.piece_type == "Bishop":
-                for i in range(1, 8):
-                    piece.valid_moves.extend(
+                    possible_moves = (
                         [
-                            (col - i, row - i),  # getting all top left diagonal sqaures
-                            (
-                                col + i,
-                                row - i,
-                            ),  # getting all top right diagonal sqaures
-                            (
-                                col - i,
-                                row + i,
-                            ),  # getting all bottom left diagonal sqaures
-                            (
-                                col + i,
-                                row + i,
-                            ),  # getting all botoom right diagonal sqaures
+                            (col - 1, row - 1),  # getting all top left diagonal sqaures
+                            (col + 1, row - 1),  # getting all top right diagonal sqaures
+                            (col - 1, row + 1),  # getting all bottom left diagonal sqaures
+                            (col + 1, row + 1),  # getting all botoom right diagonal sqaures
                         ]
                     )
-
+                    valid_ranged_moves(possible_moves)
+                   
             # valid moves for Rooks
             elif piece.piece_type == "Rook":
-                for i in range(1, 8):
-                    piece.valid_moves.extend(
+                    possible_moves = (
                         [
-                            (col - i, row),  # getting all squares left  of it
-                            (col + i, row),  # getting all squares right of it
-                            (col, row + i),  # getting all squares above of it
-                            (col, row - i),  # getting all squares below of it
-                        ]
-                    )
+                            (col - 1, row),  # getting all squares left  of it
+                            (col + 1, row),  # getting all squares right of it
+                            (col, row + 1),  # getting all squares above of it
+                            (col, row - 1),  # getting all squares below of it
+                        ])
 
             # valid moves for Queen is a combination of rooks and bishops
             elif piece.piece_type == "Queen":
-                for i in range(1, 8):
                     # queen is a combination of Rook and Bishop
-                    piece.valid_moves.extend(
+                    possible_moves = (
                         [
-                            (col - i, row),  # getting all squares left  of it
-                            (col + i, row),  # getting all squares right of it
-                            (col, row + i),  # getting all squares above of it
-                            (col, row - i),  # getting all squares below of it
-                            (col - i, row - i),  # getting all top left diagonal sqaures
-                            (
-                                col + i,
-                                row - i,
-                            ),  # getting all top right diagonal sqaures
-                            (
-                                col - i,
-                                row + i,
-                            ),  # getting all bottom left diagonal sqaures
-                            (
-                                col + i,
-                                row + i,
-                            ),  # getting all botoom right diagonal sqaures
-                        ]
-                    )
+                            (col - 1, row),  # getting all squares left  of it
+                            (col + 1, row),  # getting all squares right of it
+                            (col, row + 1),  # getting all squares above of it
+                            (col, row - 1),  # getting all squares below of it
+                            (col - 1, row - 1),  # getting all top left diagonal sqaures
+                            (col + 1, row - 1),  # getting all top right diagonal sqaures
+                            (col - 1, row + 1),  # getting all bottom left diagonal sqaures
+                            (col + 1, row + 1),  # getting all botoom right diagonal sqaures
+                        ] )
 
             # valid moves for King is one sqaure in each direction
             elif piece.piece_type == "King":
-                piece.valid_moves.extend(
+                 possible_moves = (
                     [
                         (col - 1, row - 1),  # move to top left
                         (col, row - 1),  # move to one square above
@@ -225,8 +236,20 @@ class ChessBoard:
                         (col + 1, row + 1),  # move tobotom right
                     ]
                 )
+                 
+                 for possible_moves_col, possible_moves_row in possible_moves:
+                    # it can move to any empty square or a square thta has an enemy piece
+                        if Square.in_range(possible_moves_col, possible_moves_row):
+                            possible_square = self.get_square(possible_moves_col, possible_moves_row)
+                            if possible_square.is_empty_or_has_enemy(self.piece_selected_to_move.color):
+                                self.piece_selected_to_move.valid_moves.append((possible_moves_col, possible_moves_row))
+                            elif possible_square.has_ally(piece.color):
+                                print("{self.piece} is blocked") 
+                                break
+                        break 
 
-    def move_piece(self, position):
+    def move_piece(self, position):#(self, piece, initial_square, destination sqaure)
+
         clicked_col = position[0] // self.square_size
         clicked_row = position[1] // self.square_size
 
@@ -234,45 +257,33 @@ class ChessBoard:
         if 0 <= clicked_col < self.column and 0 <= clicked_row < self.Rows:
 
             # 1st click on your piece it gets selected and highlights possible moves
-            initial_square = self.get_square(clicked_col, clicked_row)
+            initial_square = self.get_square(clicked_col, clicked_row)#(clicked_col, clicked_row)
+            
             # check if a square has a piece of it
-
             # select the piece on the square
             if initial_square.has_piece:
                 self.initial_square = initial_square
                 self.piece_selected_to_move = initial_square.get_piece()
 
                 if self.piece_selected_to_move is not None:
-                    self.assign_valid_moves(
-                        self.piece_selected_to_move,
-                        self.initial_square.column,
-                        self.initial_square.row,
-                    )
+                    self.assign_valid_moves(self.piece_selected_to_move, self.initial_square.column, self.initial_square.row,)
                     # this square become the initial square where we assign legal moves for the piece from
-                    print(
-                        f"{self.piece_selected_to_move.piece_type} valid moves: {self.piece_selected_to_move.valid_moves}"
-                    )
+                    print( f"{self.piece_selected_to_move.piece_type} valid moves: {self.piece_selected_to_move.valid_moves}")
 
             elif self.piece_selected_to_move is not None:
-                destination_square = self.get_square(clicked_col, clicked_row)
-                # the piece moves to the next square we click if it is in the pieces valid moves list
-                for valid_col, valid_row in self.piece_selected_to_move.valid_moves:
-                    if (clicked_col, clicked_row) == (valid_col, valid_row):
+                    for i in self.piece_selected_to_move.valid_moves:
+                        destination_square = self.get_square(clicked_col, clicked_row)
+                        if  destination_square ==  i:
+                    # the piece moves to the next square we click if it is in the pieces valid moves list
+                    # Swap the values of variable to make the move
+                            self.initial_square.piece, destination_square.piece = destination_square.piece, self.initial_square.piece
+                        #clearing movement managment variables
+                            self.piece_selected_to_move = None
+                            self.initial_square = None
+                            self.initial_square.piece = None
+                            print(f"Moved {self.piece_selected_to_move.piece_type} to ({clicked_col})({clicked_row})" )
 
-                        destination_square.piece = self.initial_square.piece
-                        self.piece_selected_to_move = None
-
-                        self.initial_square = None
-                        self.initial_square.piece = None
-                        print(
-                            f"Moved {self.piece_selected_to_move.piece_type} to ({clicked_col})({clicked_row})"
-                        )
-
-                    else:
-                        print(f"invalid move")
-
-                # selecting a new piece
+                        else:
+                            print(f"invalid move")
             else:
-                print(
-                    "clicked on empty square no piece selected, click on  a sqaure with a piece to select it"
-                )
+                print( "clicked on empty square no piece selected, click on  a sqaure with a piece to select it")

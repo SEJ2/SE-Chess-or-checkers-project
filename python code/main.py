@@ -45,19 +45,10 @@ def main():
                         4,
                     )
                 # highlight moves
+                
                 if chessboard.piece_selected_to_move:
                     if (col, row) in chessboard.piece_selected_to_move.valid_moves:
-                        pygame.draw.rect(
-                            screen,
-                            (255, 0, 0),
-                            (
-                                col * square.size,
-                                row * square.size,
-                                square.size,
-                                square.size,
-                            ),
-                            4,
-                        )
+                        pygame.draw.rect( screen, (255, 0, 0), ( col * square.size,row * square.size,square.size, square.size, ), 4,)
 
         # updating the screen
         pygame.display.flip()
