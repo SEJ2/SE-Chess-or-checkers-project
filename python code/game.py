@@ -1,7 +1,6 @@
 import board
 import pieces
 import pygame
-import move
 
 pygame.init()
 

@@ -8,7 +8,6 @@ import pygame
 def main():
     running = True
     chessboard = ChessBoard(screen)
-    piece_selected_to_move = None
     mouse_x = None
     mouse_y = None
 
@@ -46,8 +45,8 @@ def main():
                     )
                 # highlight moves
                 
-                if chessboard.piece_selected_to_move:
-                    if (col, row) in chessboard.piece_selected_to_move.valid_moves:
+                if chessboard.piece_to_move:
+                    if (col, row) in chessboard.piece_to_move.valid_moves:
                         pygame.draw.rect( screen, (255, 0, 0), ( col * square.size,row * square.size,square.size, square.size, ), 4,)
 
         # updating the screen
