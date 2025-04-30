@@ -50,13 +50,6 @@ class ChessBoard:
     # function for assigning pieces their initial posotion on the board
     def pieces_starting_position(self, surface):
 
-        #debugging placement
-        black_debuging_square = self.get_square(4,3)
-        black_debuging_square.piece = black_backrow.__getitem__(0)
-
-        white_debug_square = self.get_square(3,3)
-        white_debug_square.piece = white_backrow.__getitem__(2)
-
         # assigning the White pieces in the backrow starting postion
         for col, piece in white_backrow.items():
             square = self.get_square(col, 7)
@@ -109,7 +102,7 @@ class ChessBoard:
                  
             for possible_moves_col, possible_moves_row in possible_moves:
                     # it can move to any empty square or a square that has an enemy piece
-                            if Square.in_range(possible_moves_col, possible_moves_row):
+                            if Square.in_range( possible_moves_row):
                                 possible_square = self.get_square(possible_moves_col, possible_moves_row)
                                 
                                 if possible_square.is_empty():
@@ -124,7 +117,6 @@ class ChessBoard:
                             if valid_horizontal_square.piece.color != piece.color:
                                 piece.valid_moves.append((diag_col, diag_row))
              
-
         # initializing valid moves list as empty
         piece.valid_moves = []
         # bound checking to get the clicked square
@@ -188,7 +180,6 @@ class ChessBoard:
                         if possible_square.is_empty_or_has_enemy(piece.color):
                             piece.valid_moves.append((possible_moves_col, possible_moves_row))
 
-
             # valid moves for Bishops
             if piece.piece_type == "Bishop":
                     possible_moves = (
@@ -242,14 +233,15 @@ class ChessBoard:
                     ]
                 )
                 for possible_moves_col, possible_moves_row in possible_moves:
-                    # it can move to any empty square or a square thta has an enemy piece
-                    if Square.in_range(possible_moves_col, possible_moves_row):
-                        possible_square = self.get_square(possible_moves_col, possible_moves_row)
-                        if possible_square.is_empty_or_has_enemy(piece.color):
-                            piece.valid_moves.append((possible_moves_col, possible_moves_row))
-                        elif possible_square.has_ally(piece.color):
-                            print("King is blocked")
-                            break
+                    # it can move to any empty square or a square that has an enemy piece
+                            if Square.in_range(possible_moves_col, possible_moves_row):
+                                possible_square = self.get_square(possible_moves_col, possible_moves_row)
+                                
+                                if possible_square.is_empty():
+                                    piece.valid_moves.append((possible_moves_col, possible_moves_row))
+                                    
+                                if possible_square.has_enemy(piece.color):
+                                     piece.valid_moves.append((possible_moves_col, possible_moves_row))
                  
     def move_piece(self, initial_square):
 
