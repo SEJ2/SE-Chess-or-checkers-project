@@ -239,40 +239,53 @@ class ChessBoard:
                         (col + 1, row + 1),  # move tobotom right
                     ]
                 )
+                 valid_ranged_moves(possible_moves)
                  
-                 for possible_moves_col, possible_moves_row in possible_moves:
-                    # it can move to any empty square or a square thta has an enemy piece
-                        if Square.in_range(possible_moves_col, possible_moves_row):
-                            possible_square = self.get_square(possible_moves_col, possible_moves_row)
-                            if possible_square.is_empty_or_has_enemy(piece.color):
-                                piece.valid_moves.append((possible_moves_col, possible_moves_row))
-                            elif possible_square.has_ally(piece.color):
-                                print("{self.piece} is blocked") 
-                                break
-                        break 
 
-    def move_piece(self, initial_square):#(self, piece, initial_square, destination sqaure)
+
+#currently this method moves the peice but does not clear it if clicke on an empty square and does not capture pieces
+# and it crashes with nonetype when cliking on empty squares
+    def move_piece(self, initial_square):
 
         col = initial_square[0] // self.square_size
         row = initial_square[1]  // self.square_size
-        initial_square = self.get_square(col, row)
 
+    #bound checking to get the clicked square
+        if  0 <= col < self.column and 0 <= row < self.Rows:
+ 
+            initial_square = self.get_square(col, row)
 
-        if initial_square and initial_square.has_piece():
+         #first click for selecting or reselecting a piece
+            if initial_square.has_piece() and not self.piece_to_move:
                 self.initial_square = initial_square
                 self.piece_to_move = self.initial_square.piece
                 self.assign_valid_moves(self.piece_to_move, col, row)
+                print(f"selected piece {self.piece_to_move.color}_{self.piece_to_move.piece_type}")
+                # reselecting a piece
+            elif  initial_square.has_piece() and self.piece_to_move and  initial_square.piece.color == self.piece_to_move.color:
+                    self.initial_square = initial_square
+                    self.piece_to_move = self.initial_square.piece
+                    self.assign_valid_moves(self.piece_to_move, col, row)
+                    print(f"selected new {self.piece_to_move.piece_type}")
 
-        if self.piece_to_move:
-                if (col, row) in self.piece_to_move.valid_moves:
+                #moving the piece
+            elif self.piece_to_move and (col, row) in self.piece_to_move.valid_moves:
+                    
                     final_square = self.get_square(col, row)
-            
-                    if final_square:
-                        self.initial_square.piece, final_square.piece = final_square.piece, self.initial_square.piece
 
-                        self.piece_to_move = None
-                        self.initial_square = None
-                    else: 
-                        print("invalid move")
-        else:
-            print(" no piece to move")
+                    final_square.piece = self.initial_square.piece
+
+                    self.piece_to_move = None
+                    self.initial_square.piece = None
+
+            else:
+                print(" empty square")
+            
+ 
+
+
+
+
+
+
+

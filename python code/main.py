@@ -30,7 +30,7 @@ def main():
                 square.draw_square(screen)
                 square.draw_pieces(screen)
 
-                # highlighting square
+                """ # highlighting square
                 if square == chessboard.initial_square:
                     pygame.draw.rect(
                         screen,
@@ -42,7 +42,7 @@ def main():
                             square.size,
                         ),
                         4,
-                    )
+                    ) """
                 # highlight moves
                 
                 if chessboard.piece_to_move:
