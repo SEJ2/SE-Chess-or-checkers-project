@@ -92,22 +92,38 @@ class ChessBoard:
                     if Square.in_range(possible_moves_col, possible_moves_row) and (possible_moves_col, possible_moves_row) != (col, row):
                             possible_square = self.get_square(possible_moves_col, possible_moves_row)
                             
-                            if possible_square.is_empty:
-                                if (possible_moves_col, possible_moves_row) != (col, row):
+                            if possible_square.is_empty():
+                                #if (possible_moves_col, possible_moves_row) != (col, row):
                                     piece.valid_moves.append((possible_moves_col, possible_moves_row))
 
-                            if possible_square.has_enemy(piece.color):
-                                if (possible_moves_col, possible_moves_row) != (col, row):
+                            if possible_square.has_piece():
+                                if possible_square.piece.color != piece.color:
                                     piece.valid_moves.append((possible_moves_col, possible_moves_row))
-                                break
-
-                            elif possible_square.has_ally(piece.color):
-                                break
-                            
+                                break                           
                     else: break
 
                     possible_moves_col += col_increment
                     possible_moves_row += row_increment
+
+        def pawn_moves(possible_moves, pawn_diagonal_moves):
+                 
+            for possible_moves_col, possible_moves_row in possible_moves:
+                    # it can move to any empty square or a square that has an enemy piece
+                            if Square.in_range(possible_moves_col, possible_moves_row):
+                                possible_square = self.get_square(possible_moves_col, possible_moves_row)
+                                
+                                if possible_square.is_empty():
+
+                                    piece.valid_moves.append((possible_moves_col, possible_moves_row))
+                                    break
+
+                            
+            for diag_col, diag_row in pawn_diagonal_moves:
+                        valid_horizontal_square = self.get_square(diag_col, diag_row)
+                        if (valid_horizontal_square and valid_horizontal_square.has_piece()):
+                            if valid_horizontal_square.piece.color != piece.color:
+                                piece.valid_moves.append((diag_col, diag_row))
+             
 
         # initializing valid moves list as empty
         piece.valid_moves = []
@@ -115,57 +131,43 @@ class ChessBoard:
         if 0 <= col < self.column and 0 <= row < self.Rows:
 
             # valid direction for Pawn moves
-            # White Pawn moves
             if piece.piece_type == "Pawn":
+                two_step_square = None
                 if piece.color == "White":
                     direction = -1
                     Pawn_start_row = 6
-
                     # getting diagonal sqaure
-                    white_diagonal_squares = [
-                        (col - 1, row - 1),  # left diagonal square,
-                        (col + 1, row - 1),  # right diagonal square
-                    ]
+                    white_diagonal_squares = [(col - 1, row - 1), (col + 1, row - 1)]  
+                    if (col, row) == (col, Pawn_start_row):
+                        two_step_square = self.get_square(col, Pawn_start_row + direction)
 
-                    if row == Pawn_start_row:
-                        piece.valid_moves.extend([(col, row + direction)])
-                        piece.valid_moves.extend([(col, row + direction * 2)])
-                        
+                    if two_step_square and two_step_square.is_empty():
+                       possible_moves = [(col, row + direction), (col, row + direction * 2)]
+
                     else:
-                        piece.valid_moves.extend([(col, row + direction)])
-                        
-
-                    # adding diagonal pawn move if it is diagonal to it and has an enemy
-                    for diag_col, diag_row in white_diagonal_squares:
-                        valid_horizaontal_square = self.get_square(diag_col, diag_row)
-
-                        if (valid_horizaontal_square and valid_horizaontal_square.has_piece()):
-                            if valid_horizaontal_square.piece.color != piece.color:
-                                piece.valid_moves.append((diag_col, diag_row))
+                        two_step_square = None
+                        possible_moves = [(col, row + direction)]  
+                    pawn_moves(possible_moves, white_diagonal_squares)
 
                 # Black Pawn moves
                 elif piece.color == "Black":
                     direction = 1
                     Pawn_start_row = 1
                     # getting diagonal sqaure
-                    Black_diagonal_squares = [(col - 1, row + 1), (col + 1, row + 1)]
-                    if row == Pawn_start_row:
-                        # setting the pawn to move only one direction but optionally two if its on its first row
-                        
-                        piece.valid_moves.extend([(col, row + direction)])
-                        piece.valid_moves.extend([(col, row + direction * 2)])
+                    Black_diagonal_squares = [(col - 1, row + 1), 
+                                              (col + 1, row + 1),] 
+                    
+                    if (col, row) == (col, Pawn_start_row):
+                        two_step_square = self.get_square(col, Pawn_start_row + direction)
+
+                    if two_step_square and two_step_square.is_empty():
+                       possible_moves = [(col, row + direction), (col, row + direction * 2)]
 
                     else:
-                        piece.valid_moves.extend([(col, row + direction)])
+                        possible_moves = [(col, row + direction)]  
+                    pawn_moves(possible_moves, Black_diagonal_squares)
                         
-
-                    # adding diagonal pawn move if it enemy is diagonal to it
-                    for diag_col, diag_row in Black_diagonal_squares:
-                        valid_horizaontal_square = self.get_square(diag_col, diag_row)
-                        if valid_horizaontal_square and valid_horizaontal_square.has_piece():
-                            if valid_horizaontal_square.piece.color != piece.color:
-                                piece.valid_moves.append((diag_col, diag_row))
-            pass
+                        
             # valid moves for Knights
             if piece.piece_type == "Knight":
                 possible_moves = [
@@ -227,7 +229,7 @@ class ChessBoard:
 
             # valid moves for King is one sqaure in each direction
             if piece.piece_type == "King":
-                 possible_moves = (
+                possible_moves = (
                     [
                         (col - 1, row - 1),  # move to top left
                         (col, row - 1),  # move to one square above
@@ -239,12 +241,16 @@ class ChessBoard:
                         (col + 1, row + 1),  # move tobotom right
                     ]
                 )
-                 valid_ranged_moves(possible_moves)
+                for possible_moves_col, possible_moves_row in possible_moves:
+                    # it can move to any empty square or a square thta has an enemy piece
+                    if Square.in_range(possible_moves_col, possible_moves_row):
+                        possible_square = self.get_square(possible_moves_col, possible_moves_row)
+                        if possible_square.is_empty_or_has_enemy(piece.color):
+                            piece.valid_moves.append((possible_moves_col, possible_moves_row))
+                        elif possible_square.has_ally(piece.color):
+                            print("King is blocked")
+                            break
                  
-
-
-#currently this method moves the peice but does not clear it if clicke on an empty square and does not capture pieces
-# and it crashes with nonetype when cliking on empty squares
     def move_piece(self, initial_square):
 
         col = initial_square[0] // self.square_size
@@ -279,7 +285,10 @@ class ChessBoard:
                     self.initial_square.piece = None
 
             else:
+                #if you clicke on an empty square you desselect everything
                 print(" empty square")
+                self.piece_to_move = None
+                self.initial_square = None
             
  
 
