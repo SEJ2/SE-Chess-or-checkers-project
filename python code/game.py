@@ -6,7 +6,7 @@ pygame.init()
 
 
 class Game:
-    def __init__(self, active_player, boardstate):
+    def __init__(self, active_player, boardstate, move_log):
         # setting up to capture the board state at any turn
         self.boardstate = boardstate
 
@@ -21,10 +21,10 @@ class Game:
         self.turn = 1
 
     def log_move(self, initial_square, final_square):
-        if board.move_piece():
-            initial_square = board.initial_square
-            final_square = board.final_square
-            self.move_log.append(initial_square,final_square)
+            #initial_square = board.initial_square
+            #final_square = board.final_square
+            #move_log.append(initial_square,final_square)
+            pass
 
 
     def get_active_player(self, color):

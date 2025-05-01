@@ -224,13 +224,11 @@ class ChessBoard:
                                      piece.valid_moves.append((possible_moves_col, possible_moves_row))
                  
     def move_piece(self, initial_square):
-
         col = initial_square[0] // self.square_size
         row = initial_square[1]  // self.square_size
 
     #bound checking to get the clicked square
         if  0 <= col < self.column and 0 <= row < self.Rows:
- 
             initial_square = self.get_square(col, row)
 
          #first click for selecting or reselecting a piece
@@ -251,25 +249,15 @@ class ChessBoard:
                     
                     self.final_square = self.get_square(col, row)
                     self.final_square.piece = self.initial_square.piece
-                    
-                    Game.log_move(self.initial_square, self.final_square)
+
                     self.piece_to_move = None
                     self.initial_square.piece = None
 
                     #logging the move
-                    
+                    #Game.log_move(self.initial_square, self.final_square)         
 
             else:
                 #if you clicke on an empty square you desselect everything
                 print(" empty square")
                 self.piece_to_move = None
                 self.initial_square = None
-            
- 
-
-
-
-
-
-
-
