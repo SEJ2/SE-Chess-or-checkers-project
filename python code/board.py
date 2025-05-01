@@ -23,6 +23,7 @@ class ChessBoard:
         self.pieces_starting_position(screen)
         self.piece_to_move = None
         self.initial_square = None
+        self.final_square = None
 
     # setting color options for the squares
     # creating squares
@@ -102,14 +103,14 @@ class ChessBoard:
                  
             for possible_moves_col, possible_moves_row in possible_moves:
                     # it can move to any empty square or a square that has an enemy piece
-                            if Square.in_range( possible_moves_row):
+                            if Square.in_range(possible_moves_row):
                                 possible_square = self.get_square(possible_moves_col, possible_moves_row)
-                                
-                                if possible_square.is_empty():
 
+                                if possible_square.is_empty():
                                     piece.valid_moves.append((possible_moves_col, possible_moves_row))
                                     break
-
+                                if possible_square.row == Pawn_start_row:
+                                    possible_moves.extend([(col, row + direction * 2)])
                             
             for diag_col, diag_row in pawn_diagonal_moves:
                         valid_horizontal_square = self.get_square(diag_col, diag_row)
@@ -124,42 +125,21 @@ class ChessBoard:
 
             # valid direction for Pawn moves
             if piece.piece_type == "Pawn":
-                two_step_square = None
                 if piece.color == "White":
                     direction = -1
                     Pawn_start_row = 6
                     # getting diagonal sqaure
                     white_diagonal_squares = [(col - 1, row - 1), (col + 1, row - 1)]  
-                    if (col, row) == (col, Pawn_start_row):
-                        two_step_square = self.get_square(col, Pawn_start_row + direction)
-
-                    if two_step_square and two_step_square.is_empty():
-                       possible_moves = [(col, row + direction), (col, row + direction * 2)]
-
-                    else:
-                        two_step_square = None
-                        possible_moves = [(col, row + direction)]  
+                    possible_moves = [(col, row + direction)] 
                     pawn_moves(possible_moves, white_diagonal_squares)
-
                 # Black Pawn moves
                 elif piece.color == "Black":
                     direction = 1
-                    Pawn_start_row = 1
                     # getting diagonal sqaure
                     Black_diagonal_squares = [(col - 1, row + 1), 
                                               (col + 1, row + 1),] 
-                    
-                    if (col, row) == (col, Pawn_start_row):
-                        two_step_square = self.get_square(col, Pawn_start_row + direction)
-
-                    if two_step_square and two_step_square.is_empty():
-                       possible_moves = [(col, row + direction), (col, row + direction * 2)]
-
-                    else:
-                        possible_moves = [(col, row + direction)]  
-                    pawn_moves(possible_moves, Black_diagonal_squares)
-                        
-                        
+                    possible_moves = [(col, row + direction)] 
+                    pawn_moves(possible_moves,  Black_diagonal_squares)           
             # valid moves for Knights
             if piece.piece_type == "Knight":
                 possible_moves = [
@@ -269,12 +249,15 @@ class ChessBoard:
                 #moving the piece
             elif self.piece_to_move and (col, row) in self.piece_to_move.valid_moves:
                     
-                    final_square = self.get_square(col, row)
-
-                    final_square.piece = self.initial_square.piece
-
+                    self.final_square = self.get_square(col, row)
+                    self.final_square.piece = self.initial_square.piece
+                    
+                    Game.log_move(self.initial_square, self.final_square)
                     self.piece_to_move = None
                     self.initial_square.piece = None
+
+                    #logging the move
+                    
 
             else:
                 #if you clicke on an empty square you desselect everything

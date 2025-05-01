@@ -13,12 +13,19 @@ class Game:
         self.active_player = active_player
         self.White_player = board.pieces.color.White
         self.black_player = board.pieces.color.Black
-
+        self.move_log = []
         self.White_player_active = True
         self.Black_player = False
 
         # initialize on turn 1
         self.turn = 1
+
+    def log_move(self, initial_square, final_square):
+        if board.move_piece():
+            initial_square = board.initial_square
+            final_square = board.final_square
+            self.move_log.append(initial_square,final_square)
+
 
     def get_active_player(self, color):
         if board.piece.valid_moves is not []:

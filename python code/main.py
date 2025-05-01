@@ -10,7 +10,7 @@ def main():
     chessboard = ChessBoard(screen)
     mouse_x = None
     mouse_y = None
-
+    
     while running:
         for event in pygame.event.get():
             # Check for QUIT event
@@ -20,6 +20,8 @@ def main():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 chessboard.move_piece((mouse_x, mouse_y))
+                #Game.log_move(chessboard.initial_square,mouse_x, mouse_y)
+               
 
         screen.fill((255, 255, 255))
 
